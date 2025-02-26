@@ -1,5 +1,7 @@
-const  = () => {
-  return (  );
+import { Button } from "@/components/ui/button";
+
+const Homepage = () => {
+  return <Button>Button</Button>;
 }
- 
-export default ;
+
+export default Homepage;
