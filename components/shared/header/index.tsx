@@ -16,9 +16,8 @@ const Header = () => {
 
             </div>
 
-            <ModeToggle />
-
             <div className="space-x-2">
+                <ModeToggle />
                 <Button asChild variant='ghost'>
                     <Link href="/cart">
                         <ShoppingCart />Cart
