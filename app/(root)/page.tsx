@@ -1,4 +1,4 @@
-import sampleData from "./db/sample-data";
+import sampleData from "../../db/sample-data";
 import ProductList from "@/components/shared/product/product-list";
 const Homepage = async () => {
 
