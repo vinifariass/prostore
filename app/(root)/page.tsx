@@ -1,5 +1,5 @@
+const Homepage = async () => {
 
-const Homepage = () => {
   return <>Prostore</>;
 }
 
