@@ -15,17 +15,17 @@ const CredentialsSignInForm = () => {
         message: ''
     });
 
-const SignInButton = () => {
-    const { pending } = useFormStatus();
-    return (
-        <Button className="w-full" variant='default' disabled={pending}>
-            {pending ? 'Signing In...' : 'Sign In'}
-        </Button>
-    );
-}
+    const SignInButton = () => {
+        const { pending } = useFormStatus();
+        return (
+            <Button className="w-full" variant='default' disabled={pending}>
+                {pending ? 'Signing In...' : 'Sign In'}
+            </Button>
+        );
+    }
 
     return (
-        <form>
+        <form action={action}>
             <div className="space-y-6">
                 <div>
                     <Label htmlFor="email">Email</Label>
