@@ -35,13 +35,13 @@ const SignUpForm = () => {
 
                 <div>
                     <Label htmlFor="name">Name</Label>
-                    <Input type="text" id="name" name="name" required autoComplete="name"
+                    <Input type="text" id="name" name="name"  autoComplete="name"
                         defaultValue={signUpDefaultValues.name} />
                 </div>
 
                 <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" name="email" required autoComplete="email"
+                    <Input type="text" id="email" name="email"  autoComplete="email"
                         defaultValue={signUpDefaultValues.email} />
                 </div>
 
