@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemSchema, insertCartSchema } from "../validators";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 const calcPrices = (items: CartItem[]) => {
     const itemsPrice = round2(items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0)),
@@ -76,10 +77,49 @@ export async function addItemToCart(data: CartItem) {
 
             return {
                 success: true,
-                message: `Item added to cart`
+                message: `${product.name} added to cart`
+            }
+        } else {
+            // Check if item is already in cart
+            const existItem = (cart.items as CartItem[]).find((i) => i.productId === item.productId)
+
+            if (existItem) {
+                // Check stock
+                if (product.stock < existItem.qty + item.qty) {
+                    throw new Error('Product out of stock')
+                }
+                // Increase the quantity
+                (cart.items as CartItem[]).find((i) => i.productId === item.productId)!.qty += existItem.qty
+            } else{
+                // If item does not exist in cart
+                // Check stock
+                if(product.stock < 1) {
+                    throw new Error('Not enough stock')
+                }
+
+                // Add item to the cart.items
+                cart.items.push(item)
+            }
+
+            // Save to database
+            await prisma.cart.update({
+                where: {
+                    id: cart.id
+                },
+                data: {
+                    items: cart.items as Prisma.CartUpdateitemsInput[],
+                    ...calcPrices(cart.items as CartItem[])
+                }
+            })
+
+            revalidatePath(`/product/${product.slug}`)
+
+            return {
+                success: true,
+                message: `${product.name} ${existItem ? 'updated in' : 'added to'} cart`
             }
         }
-        
+
     } catch (error) {
         return {
             success: false,
