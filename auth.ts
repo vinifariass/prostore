@@ -5,7 +5,6 @@ import { prisma } from './db/prisma';
 import { adapter } from 'next/dist/server/web/adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compareSync } from 'bcrypt-ts-edge';
-import type { NextAuthConfig } from 'next-auth';
 
 export const config = {
     pages: {
@@ -13,7 +12,7 @@ export const config = {
         error: '/signin',
     },
     session: {
-        strategy: 'jwt',
+        strategy: 'jwt' as const,
         maxAge: 30 * 24 * 60 * 60,
     },
     adapter: PrismaAdapter(prisma),
@@ -83,12 +82,13 @@ export const config = {
                             name: token.name,
                         },
                     });
-                } 
+                }
             }
             return token;
+
         }
     }
     //Ensures that the object structure, this config is compatible with NextAuth
-} satisfies NextAuthConfig;
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);

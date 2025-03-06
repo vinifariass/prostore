@@ -26,8 +26,6 @@ const AddToCart = ({ item }: { item: CartItem }) => {
 
     const res = await addItemToCart(item);
 
-
-
     if (!res.success) {
 
       toast.error(res.message);
@@ -35,8 +33,6 @@ const AddToCart = ({ item }: { item: CartItem }) => {
       return;
 
     }
-
-
 
     toast.success(`${item.name} added to cart`, {
 
