@@ -57,15 +57,15 @@ export const config = {
             //Set the user ID from the token
             session.user.id = token.sub;
             session.user.role = token.role;
-            session.user.name = user.name;
+            session.user.name = token.name;
 
             // If there is an update, set the user name
-            if (trigger === 'name') {
+            if (trigger === 'update') {
                 session.user.name = user.name;
             }
             return session;
         },
-        async jwt({ token, user, account, profile, isNewUser }: any) {
+        async jwt({ token, user, trigger, session }: any) {
             // Assign user fields to token
             if (user) {
                 token.role = user.role;

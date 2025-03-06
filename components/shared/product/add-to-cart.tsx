@@ -1,17 +1,64 @@
-'use client'
+"use client";
+
+
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/router";
+
+import { useRouter } from "next/navigation";
+
 import { Plus } from "lucide-react";
+
 import { CartItem } from "@/types";
-import { toast } from "sonner"
+
+import { addItemToCart } from "@/lib/actions/cart.actions";
+
+import { toast } from "sonner"; // <-- Changed this import
+
 
 
 const AddToCart = ({ item }: { item: CartItem }) => {
-    const handleAddToCard = () => {
-        toast.success('Item added to cart');
-    }
-    return (<Button className="w-full" type="button" onClick={handleAddToCard}>Add to cart</Button>);
-}
 
+  const router = useRouter();
+
+
+
+  const handleAddToCart = async () => {
+
+    const res = await addItemToCart(item);
+
+
+
+    if (!res.success) {
+
+      toast.error(res.message);
+
+      return;
+
+    }
+
+
+
+    toast.success(`${item.name} added to cart`, {
+
+      action: {
+
+        label: "Go to Cart",
+
+        onClick: () => router.push("/cart"),
+
+      },
+
+    });
+
+  }
+  return (
+    <Button
+      onClick={handleAddToCart}
+      className="w-full"
+    >
+      <Plus size={16} />
+      Add to Cart
+    </Button>
+  );
+};
 export default AddToCart;
