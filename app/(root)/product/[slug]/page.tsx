@@ -41,10 +41,9 @@ const ProductDetailsPage = async (props: {
                         </div>
                     </div>
                     <div className="mt-10">
-                        <p className="font-semibold">
+                        <div className="font-semibold">
                             <p>{product.description}</p>
-
-                        </p>
+                        </div>
                     </div>
                 </div>
                 {/*Actions Column*/}
@@ -69,14 +68,14 @@ const ProductDetailsPage = async (props: {
                                 <div className="flex-center">
                                     <AddToCart
                                         cart={cart}
-                                    item={{
-                                        productId: product.id,
-                                        name: product.name,
-                                        slug: product.slug,
-                                        price: product.price,
-                                        qty: 1,
-                                        image: product.images![0]
-                                    }} />
+                                        item={{
+                                            productId: product.id,
+                                            name: product.name,
+                                            slug: product.slug,
+                                            price: product.price,
+                                            qty: 1,
+                                            image: product.images![0]
+                                        }} />
                                 </div>
                             )}
                         </CardContent>
