@@ -16,9 +16,9 @@ export const signUpDefaultValues = {
 }
 
 export const shippingAddressDefaultValues = {
-    fullName: 'John Doe',
-    streetAddress: '1234 Main St',
-    city: 'San Francisco',
-    postalCode: '94111',
-    country: 'United States',
+    fullName: '',
+    streetAddress: '',
+    city: '',
+    postalCode: '',
+    country: '',
 }
