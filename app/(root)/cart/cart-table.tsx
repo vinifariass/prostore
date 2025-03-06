@@ -1,7 +1,7 @@
 'use client'
 
 import { Cart } from "@/types";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { addItemToCart, removeItemFromCart } from "@/lib/actions/cart.actions";
@@ -10,12 +10,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { CardContent, Card } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
 
 const CartTable = ({ cart }: { cart?: Cart }) => {
 
-    //const router = useRouter();
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
-
 
     return (
         <>
@@ -76,6 +77,23 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                             </TableBody>
                         </Table>
                     </div>
+
+                    <Card>
+                        <CardContent className="p-4 gap-4">
+                            <div className="pb-3 text-xl">
+                                Subtotal ({
+                                    cart.items.reduce((acc, item) => acc + item.qty, 0)
+                                })
+                                <span className="font-bold">
+                                    {formatCurrency(cart.itemsPrice)}
+                                </span>
+
+                            </div>
+                            <Button className="w-full" disabled={isPending} onClick={() => startTransition(() => {
+                                router.push('/shipping-address');
+                            })}>{isPending ? <Loader className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />} Proceed to Checkout</Button>
+                        </CardContent>
+                    </Card>
                 </div>
             )}
         </>
