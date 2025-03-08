@@ -34,15 +34,15 @@ export async function createOrder() {
         }
 
         //Create order object
-
+        
         const order = insertOrderSchema.parse({
             userId: user.id,
+            paymentMethod: user.paymentMethod,
+            shippingAddress: user.address,
             itemsPrice: cart.itemsPrice,
             shippingPrice: cart.shippingPrice,
             taxPrice: cart.taxPrice,
             totalPrice: cart.totalPrice,
-            paymentMethod: user.paymentMethod,
-            shippingAddress: user.address
         })
 
         // Create a transaction to create order and order items in the database
@@ -77,7 +77,11 @@ export async function createOrder() {
 
         if (!insertedOrderId) throw new Error('Order not created');
 
-        return ({ success: true, message: 'Order created', redirectTo: `/order/${insertedOrderId}` })
+        return {
+            success: true,
+            message: 'Order created',
+            redirectTo: `/order/${insertedOrderId}`
+        }
 
     } catch (err) {
         if (isRedirectError(err)) throw err
