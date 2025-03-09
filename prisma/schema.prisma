@@ -28,8 +28,8 @@ model Product {
 
 model User {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?   @default("NO_NAME")
-  email         String?   @unique(map: "user_email_idx")
+  name          String    @default("NO_NAME")
+  email         String   @unique(map: "user_email_idx")
   emailVerified DateTime? @map("email_verified")
   image         String?
   password      String?
@@ -121,7 +121,7 @@ model Order {
   deliveredAt     DateTime?   @db.Timestamp(6)
   createdAt       DateTime    @default(now()) @db.Timestamp(6)
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderitems       OrderItem[]
+  orderitems      OrderItem[]
 }
 
 model OrderItem {
