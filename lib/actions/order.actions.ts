@@ -254,3 +254,22 @@ export async function getMyOrders({
         totalPages: Math.ceil(dataCount / limit)
     }
 }
+
+// Get sales data and order summary
+export async function getOrderSummary() {
+    // Get counts for each resource
+    const ordersCount = await prisma.order.count();
+    const productsCount = await prisma.product.count();
+    const usersCount = await prisma.user.count();
+
+    // Calculate the total sales
+const totalSales = await prisma.order.aggregate({
+    _sum: {
+        totalPrice: true
+    }
+});
+    
+    // Get monthly sales
+
+    // Get latest sales
+}
