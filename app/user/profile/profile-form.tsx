@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 const ProfileForm = () => {
 
     const { data: session, update } = useSession();
@@ -18,8 +19,19 @@ const ProfileForm = () => {
             email: session?.user?.email ?? '',
         }
     });
-    const onSubmit = () => {
+    const onSubmit = async (values: z.infer<typeof updateProfileSchema>) => {
+        const res = await updateProfile(values);
+        if (!res.success) {
+            toast.error(res.message);
+            return;
+        }
 
+        const newSession = {
+            ...session, user: { ...session?.user, name: values.name }
+        };
+        await update(newSession);
+
+        toast.success('User updated successfully');
     }
     return (
         <Form {...form}>

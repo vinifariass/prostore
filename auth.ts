@@ -84,6 +84,10 @@ export const config = {
                         },
                     });
                 }
+                if (session?.user.name && trigger === 'update') {
+                    token.name = session.user.name
+                }
+
                 if (trigger === 'signIn' || trigger === 'signUp') {
                     const cookiesObject = await cookies();
                     const sessionCartId = cookiesObject.get('sessionCartId')?.value;
