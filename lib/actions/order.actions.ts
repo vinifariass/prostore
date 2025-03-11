@@ -140,6 +140,7 @@ export async function createPayPalOrder(orderId: string) {
 // Approve paypal order and update order to paid
 export async function approvePayPalOrder(orderId: string, data: { orderID: string }) {
     try {
+        
         const order = await prisma.order.findFirst({
             where: { id: orderId },
         })
@@ -152,13 +153,22 @@ export async function approvePayPalOrder(orderId: string, data: { orderID: strin
             throw new Error('Error in PayPal payment')
 
         }
+
         //Update order to paid
-        // @todo
+        await updateOrderToPaid({
+            orderId, paymentResult: {
+                id: captureData.id,
+                status: captureData.status,
+                email_address: captureData.payer.email_address,
+                pricePaid: captureData.purchase_units[0]?.payments?.capture[0]?.amount?.value
+            }
+        });
 
         revalidatePath(`/order/${orderId}`);
 
         return { success: true, message: 'Your order has been paid' }
     } catch (error) {
+
         return { success: false, message: formatErrors(error) }
     }
 }
@@ -202,4 +212,17 @@ async function updateOrderToPaid({
             }
         })
     })
+
+    // Get updated order after transaction
+    const updatedOrder = await prisma.order.findFirst({
+        where: { id: orderId },
+        include: {
+            orderitems: true,
+            user: {
+                select: { email: true, name: true }
+            }
+        }
+    });
+
+    if (!updatedOrder) throw new Error('Order not found')
 }
