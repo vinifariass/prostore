@@ -277,8 +277,8 @@ export async function getOrderSummary() {
 
     // Get monthly sales
     const salesDataRaw = await prisma.$queryRaw<
-    Array<{ month: string; totalSales: Prisma.Decimal }>
-  >`SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales"
+        Array<{ month: string; totalSales: Prisma.Decimal }>
+    >`SELECT to_char("createdAt", 'MM/YY') as "month", sum("totalPrice") as "totalSales"
    FROM "Order" GROUP BY to_char("createdAt", 'MM/YY')`;
 
     const salesData: SalesDataType = salesDataRaw.map((entry) => ({
@@ -305,5 +305,48 @@ export async function getOrderSummary() {
         totalSales,
         latestSales,
         salesData
+    }
+}
+
+// Get all orders
+export async function getAllOrders({
+    limit = PAGE_SIZE,
+    page
+}: {
+    limit?: number;
+    page: number;
+}) {
+    const data = prisma.order.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: (page - 1) * limit,
+        include: {
+            user: { select: { name: true, email: true } }
+        }
+    })
+
+    const dataCount = await prisma.order.count();
+
+    return {
+        data,
+        totalPages: Math.ceil(dataCount / limit)
+    }
+}
+
+//Delete an order
+export async function deleteOrder(id: string) {
+    try {
+        const order = await prisma.order.findFirst({
+            where: { id }
+        })
+
+        revalidatePath('/admin/orders');
+
+        return {
+            success: true,
+            message: 'Order deleted successfully'
+        }
+    } catch (error) {
+        return { success: false, message: formatErrors(error) }
     }
 }
