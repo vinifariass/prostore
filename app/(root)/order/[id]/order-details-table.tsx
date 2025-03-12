@@ -54,7 +54,7 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { order: Order, p
         toast.success(res.message);
     }
 
-    //Button tgo marker ordar as paid
+    //Button to marker ordar as paid
     const MarkAsPaidButton = () => {
         const [isPending, startTransition] = useTransition();
         return (
@@ -68,6 +68,24 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { order: Order, p
                 })}
             >
                 {isPending ? 'processing...' : 'Mark as Paid'}
+            </Button>
+        )
+    }
+    //Button to marker ordar as delivered
+
+    const MarkAsDeliveredButton = () => {
+        const [isPending, startTransition] = useTransition();
+        return (
+            <Button
+                type='button'
+                disabled={isPending}
+                onClick={() => startTransition(async () => {
+                    const res = await deliverOrder(order.id)
+                    if (!res.success) toast.error(res.message);
+                    else toast.success(res.message);
+                })}
+            >
+                {isPending ? 'processing...' : 'Mark as Delivered'}
             </Button>
         )
     }
@@ -100,7 +118,7 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { order: Order, p
                         <p className="mb-2">{shippingAddress.postalCode}, {shippingAddress.country}</p>
                         {isDelivered ? (
                             <Badge variant='secondary'>
-                                Paid at {formatDateTime(deliveredAt!).dateTime}
+                                Delivered at {formatDateTime(deliveredAt!).dateTime}
                             </Badge>
                         ) : (
                             <Badge variant='destructive'>
@@ -176,7 +194,7 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { order: Order, p
                         )}
                         {/* CASH ON DELIVERY*/}
                         {
-                            isAdmin && !isPaid && paymentMethod === 'Cash On Delivery' && (
+                            isAdmin && !isPaid && paymentMethod === 'CashOnDelivery' && (
                                 <MarkAsPaidButton  />
                             )
                         }
