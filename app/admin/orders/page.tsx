@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 }
 
 const AdminOrdersPage = async (props: {
-    searchParams: { page: string }
+    searchParams: Promise<{ page: string }>
 }) => {
-    const { page = '1' } = props.searchParams;
+    const { page = '1' } = await props.searchParams;
 
     const session = await auth();
 
@@ -43,7 +43,7 @@ const AdminOrdersPage = async (props: {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {(await orders.data).map((order) => (
+                        {(orders.data).map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>{formatId(order.id)}</TableCell>
                                 <TableCell>{formatDateTime(order.createdAt).dateTime}</TableCell>
@@ -61,8 +61,8 @@ const AdminOrdersPage = async (props: {
                                         <Link href={`/order/${order.id}`}>
                                             Details
                                         </Link>
-                                        <DeleteDialog id={order.id} action={deleteOrder} />
                                     </Button>
+                                    <DeleteDialog id={order.id} action={deleteOrder} />
                                 </TableCell>
                             </TableRow>
                         ))}
