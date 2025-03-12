@@ -7,11 +7,14 @@ import { BadgeDollarSign, Barcode, CreditCard, Users } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import Charts from "./charts";
+import { requireAdmin } from "@/lib/auth-guard";
 
 export const metadata: Metadata = {
     title: 'Admin Overview',
 }
 const AdminOverviewPage = async () => {
+    await requireAdmin();
+
     const session = await auth();
 
     if (session?.user?.role !== 'admin') {
@@ -85,7 +88,7 @@ const AdminOverviewPage = async () => {
                     <CardContent>
                         <Charts data={{
                             salesData: summary.salesData,
-                        }}/>
+                        }} />
                     </CardContent>
                 </Card>
 
