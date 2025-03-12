@@ -12,15 +12,16 @@ const Charts = ({ data: { salesData } }: {
     return (<>
         <ResponsiveContainer width='100%' height={350}>
             <BarChart data={salesData}>
-                <XAxis dataKey='month'
+                <XAxis
+                    dataKey='month'
                     stroke='#888888'
-                    font-size={12}
+                    fontSize={12}
                     tickLine={false}
                     axisLine={false}
                 />
-                <YAxis dataKey='month'
+                <YAxis
                     stroke='#888888'
-                    font-size={12}
+                    fontSize={12}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(value) => `$${value}`}
@@ -28,7 +29,7 @@ const Charts = ({ data: { salesData } }: {
                 <Bar
                     dataKey='totalSales'
                     fill='currentColor'
-                    radius={[40,40,0,0]}
+                    radius={[4, 4, 0, 0]}
                     className='fill-primary'
                 />
             </BarChart>

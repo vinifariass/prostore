@@ -3,15 +3,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Order } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from '@paypal/react-paypal-js'
-import { createPayPalOrder, approvePayPalOrder } from "@/lib/actions/order.actions";
+import { createPayPalOrder, approvePayPalOrder, uptadeOrderToPaidCOD, deliverOrder } from "@/lib/actions/order.actions";
 import { toast } from "sonner";
+import { useTransition } from "react";
 
-const OrderDetailsTable = ({ order, paypalClientId }: { order: Order, paypalClientId: string }) => {
+const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { order: Order, paypalClientId: string, isAdmin: boolean }) => {
 
     const {
         id,
@@ -52,6 +54,23 @@ const OrderDetailsTable = ({ order, paypalClientId }: { order: Order, paypalClie
         toast.success(res.message);
     }
 
+    //Button tgo marker ordar as paid
+    const MarkAsPaidButton = () => {
+        const [isPending, startTransition] = useTransition();
+        return (
+            <Button
+                type='button'
+                disabled={isPending}
+                onClick={() => startTransition(async () => {
+                    const res = await uptadeOrderToPaidCOD(order.id)
+                    if (!res.success) toast.error(res.message);
+                    else toast.success(res.message);
+                })}
+            >
+                {isPending ? 'processing...' : 'Mark as Paid'}
+            </Button>
+        )
+    }
     return (<>
         <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
         <div className="grid md:grid-cols-3 md:gap-5">
@@ -155,6 +174,17 @@ const OrderDetailsTable = ({ order, paypalClientId }: { order: Order, paypalClie
                                 </PayPalScriptProvider>
                             </div>
                         )}
+                        {/* CASH ON DELIVERY*/}
+                        {
+                            isAdmin && !isPaid && paymentMethod === 'Cash On Delivery' && (
+                                <MarkAsPaidButton  />
+                            )
+                        }
+                        {
+                            isAdmin && isPaid && !isDelivered && (
+                                <MarkAsDeliveredButton />
+                            )
+                        }
                     </CardContent>
                 </Card>
             </div>
