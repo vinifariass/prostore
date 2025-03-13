@@ -8,6 +8,7 @@ const currency = z
     .refine((val) =>
         /^\d+(\.\d{2})?/.test(formatNumberWithDecimal(Number(val))),
         'Price must be a number with up to 2 decimal places');
+
 export const insertProductSchema = z.object({
     name: z.string().min(3, 'Name must be at least 3 characters'),
     slug: z.string().min(3, 'Slug must be at least 3 characters'),
@@ -21,6 +22,12 @@ export const insertProductSchema = z.object({
     price: currency
 
 });
+
+//Schema for updating products
+export const updateProductSchema = insertProductSchema.extend({
+    id: z.string().min(1, 'Product ID is required')
+});
+
 
 //Schema for signing users in
 
