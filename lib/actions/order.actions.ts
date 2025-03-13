@@ -342,7 +342,7 @@ export async function deleteOrder(id: string) {
 
         revalidatePath('/admin/orders');
 
-        return {
+    return {
             success: true,
             message: 'Order deleted successfully'
         }
