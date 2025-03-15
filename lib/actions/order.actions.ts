@@ -14,14 +14,13 @@ import { PAGE_SIZE } from "../constants";
 import { Prisma } from "@prisma/client";
 
 // Create order and create the order items
-
 export async function createOrder() {
     try {
         const session = await auth();
         if (!session) throw new Error('User not authenticated')
 
         const cart = await getMyCart();
-        const userId = session?.user?.id;
+        const userId = session.user?.id;
         if (!userId) throw new Error('User not found');
 
         const user = await getUserById(userId);
@@ -29,16 +28,15 @@ export async function createOrder() {
             return { success: false, message: 'Your cart is empty', redirectTo: './cart' }
         }
 
-        if (!user.address) {
+        if (!user?.address) {
             return { success: false, message: 'No shipping address', redirectTo: './shipping-address' }
         }
 
-        if (!user.paymentMethod) {
+        if (!user?.paymentMethod) {
             return { success: false, message: 'No payment method', redirectTo: './payment-method' }
         }
 
         //Create order object
-
         const order = insertOrderSchema.parse({
             userId: user.id,
             paymentMethod: user.paymentMethod,
@@ -50,10 +48,8 @@ export async function createOrder() {
         })
 
         // Create a transaction to create order and order items in the database
-
         const insertedOrderId = await prisma.$transaction(async (tx) => {
             //Create order
-
             const insertedOrder = await tx.order.create({ data: order });
             //Create order items from the cart items
             for (const item of cart.items as CartItem[]) {
@@ -100,7 +96,6 @@ export async function getOrderById(orderId: string) {
         include: {
             orderitems: true,
             user: { select: { email: true, name: true } }
-
         }
     })
 
@@ -153,7 +148,6 @@ export async function approvePayPalOrder(orderId: string, data: { orderID: strin
 
         if (!captureData || captureData.id !== (order.paymentResult as PaymentResult)?.id || captureData.status !== 'COMPLETED') {
             throw new Error('Error in PayPal payment')
-
         }
 
         //Update order to paid
@@ -182,7 +176,6 @@ async function updateOrderToPaid({
 }: {
     orderId: string;
     paymentResult?: PaymentResult;
-
 }) {
     // Get order from the database
     const order = await prisma.order.findFirst({
@@ -241,13 +234,13 @@ export async function getMyOrders({
     if (!session) throw new Error('User not authenticated');
 
     const data = await prisma.order.findMany({
-        where: { userId: session?.user?.id! },
+        where: { userId: session.user?.id },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: (page - 1) * limit
     })
     const dataCount = await prisma.order.count({
-        where: { userId: session?.user?.id! }
+        where: { userId: session.user?.id }
     })
 
     return {
@@ -284,10 +277,8 @@ export async function getOrderSummary() {
     const salesData: SalesDataType = salesDataRaw.map((entry) => ({
         month: entry.month,
         totalSales: Number(entry.totalSales),
-
     }))
     // Get latest sales
-
     const latestSales = await prisma.order.findMany({
         orderBy: { createdAt: 'desc' },
         take: 6,
