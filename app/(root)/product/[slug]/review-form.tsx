@@ -19,6 +19,9 @@ const ReviewForm = ({ userId, productId, onReviewSubmitted }: {
     productId: string,
     onReviewSubmitted: () => void
 }) => {
+    userId = '1';
+    productId = '1';
+    onReviewSubmitted = () => { };
     const [open, setOpen] = useState(false);
 
     const form = useForm<z.infer<typeof insertReviewSchema>>({

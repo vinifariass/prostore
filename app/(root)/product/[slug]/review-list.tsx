@@ -9,7 +9,7 @@ const ReviewList = ({ userId, productId, productSlug }: {
     productSlug: string;
 }) => {
     const [reviews, setReviews] = useState<Review[]>([]);
-
+    setReviews([]);
     return (<div className="space-y-4">
         {reviews.length == 0 && <div>No reviews yet</div>}
         {
